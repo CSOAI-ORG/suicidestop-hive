@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "meok-one"
+version = "0.2.0"
+description = "MEOK ONE — the unified consumer AI OS: hatch your care-director, one character that fronts the whole MEOK/SOV3 substrate. Canonical character registry (27 chars, 8 archetypes, 5 care-styles, 6 hatch stages) + live brain + model router + capability awareness + cross-platform memory + the everyone-eats pricing ladder + the neutral connect rail."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "MEOK AI Labs / CSOAI", email = "nicholas@csoai.org" }]
+keywords = ["meok", "ai-companion", "character", "care-ai", "sovereign-ai", "sov3", "llm-router", "hatch"]
+dependencies = []
+
+[project.scripts]
+meok-one = "meok_one.cli:main"
+meok-king = "meok_one.hive_king:_cli"
+meok-queen = "meok_one.hive_queen:_cli"
+
+[project.urls]
+Homepage = "https://meok.ai"
+Verify = "https://proofof.ai/verify"
+
+[tool.hatchling.build.targets.wheel]
+packages = ["meok_one"]
+
+[tool.hatchling.build.targets.wheel.force-include]
+"meok_one/characters.json" = "meok_one/characters.json"
+"meok_one/web/index.html" = "meok_one/web/index.html"

@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#0a0a0f">
+<title>MEOK ONE — hatch your care-director</title>
+<style>
+  :root{
+    --bg:#0a0a0f; --bg2:#0e0e16; --panel:#16161f; --panel2:#1c1c28; --line:#26263a;
+    --txt:#edeef5; --dim:#8b8ba0; --accent:#7C3AED; --accent2:#a855f7; --ok:#34d399;
+    --r:16px; --r-sm:11px; --ease:cubic-bezier(.22,1,.36,1);
+    --shadow:0 10px 40px rgba(0,0,0,.45);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%, #18122b 0%, var(--bg) 55%);
+    color:var(--txt); min-height:100dvh; display:flex; justify-content:center; overflow-x:hidden; }
+  .app{ width:100%; max-width:520px; min-height:100dvh; display:flex; flex-direction:column; position:relative; }
+  .topbar{ display:flex; align-items:center; justify-content:center; gap:.5rem; padding:1.1rem 1rem .4rem; }
+  .logo{ font-weight:800; letter-spacing:.14em; font-size:.82rem; color:var(--dim); }
+  .logo b{ color:var(--txt); }
+  .scene{ flex:1; display:flex; flex-direction:column; padding:0 1.1rem 1.1rem; }
+  .hidden{ display:none !important; }
+  .fade{ animation:fade .5s var(--ease); } @keyframes fade{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+  /* ---------- HATCH ---------- */
+  .hero{ text-align:center; padding:1.4rem 0 .6rem; }
+  .hero h1{ font-size:1.65rem; font-weight:800; letter-spacing:-.025em; line-height:1.1;
+    background:linear-gradient(90deg,#fff,#c4b5fd); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero p{ color:var(--dim); font-size:.9rem; margin-top:.45rem; }
+  .egg-wrap{ display:flex; justify-content:center; margin:1rem 0 .4rem; }
+  .egg{ font-size:4.6rem; filter:drop-shadow(0 8px 24px rgba(124,58,237,.4)); animation:bob 3.4s var(--ease) infinite; }
+  @keyframes bob{ 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+  @keyframes crack{ 0%{transform:scale(1)} 30%{transform:scale(1.15) rotate(8deg)} 45%{transform:scale(.92) rotate(-8deg)} 60%{transform:scale(1.1) rotate(6deg)} 100%{transform:scale(1)} }
+  .egg.cracking{ animation:crack .9s var(--ease); }
+  .label{ color:var(--dim); font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; margin:1.5rem 0 .6rem; font-weight:600; }
+  .arch-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.55rem; }
+  .arch{ background:var(--panel); border:1px solid var(--line); border-radius:var(--r-sm); padding:.85rem .9rem; cursor:pointer; transition:.22s var(--ease); position:relative; overflow:hidden; }
+  .arch::before{ content:""; position:absolute; inset:0; opacity:0; transition:.22s; background:linear-gradient(135deg,transparent,rgba(124,58,237,.12)); }
+  .arch:hover{ transform:translateY(-3px); border-color:#3a3a55; }
+  .arch:hover::before{ opacity:1; }
+  .arch.sel{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), 0 8px 24px rgba(124,58,237,.25); }
+  .arch .em{ font-size:1.55rem; } .arch .nm{ font-weight:700; font-size:.92rem; margin:.3rem 0 .15rem; }
+  .arch .ds{ color:var(--dim); font-size:.74rem; line-height:1.4; }
+  .chips{ display:flex; flex-wrap:wrap; gap:.45rem; }
+  .chip{ background:var(--panel); border:1px solid var(--line); border-radius:99px; padding:.5rem 1rem; cursor:pointer; font-size:.85rem; transition:.18s var(--ease); }
+  .chip:hover{ border-color:#3a3a55; transform:translateY(-2px); }
+  .chip.sel{ background:linear-gradient(135deg,var(--accent),var(--accent2)); border-color:transparent; font-weight:600; box-shadow:0 6px 18px rgba(124,58,237,.35); }
+  .field{ width:100%; background:var(--panel); border:1px solid var(--line); border-radius:var(--r-sm); padding:.9rem 1.05rem; color:var(--txt); font-size:1rem; margin-top:.6rem; transition:.18s; }
+  .field:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,58,237,.18); }
+  .cta{ background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border:none; border-radius:var(--r-sm); padding:.95rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer; width:100%; margin-top:1.4rem; transition:.2s var(--ease); box-shadow:0 8px 24px rgba(124,58,237,.35); }
+  .cta:hover:not(:disabled){ transform:translateY(-2px); box-shadow:0 12px 30px rgba(124,58,237,.5); }
+  .cta:active:not(:disabled){ transform:translateY(0) scale(.98); }
+  .cta:disabled{ opacity:.4; cursor:not-allowed; box-shadow:none; }
+
+  /* ---------- CHAT ---------- */
+  .chat{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  /* AVATAR PRESENCE — the character is always visible: breathing, blinking, mood-reactive.
+     (Paradigm principle #1: presence over pages. Emotion engine: colour+motion by mood.) */
+  .presence{ display:flex; flex-direction:column; align-items:center; padding:.6rem 0 .5rem; }
+  .avatar{ position:relative; width:108px; height:108px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; --glow:var(--accent);
+    transition:transform .5s var(--ease), filter .6s ease; }
+  .avatar .face{ font-size:3rem; line-height:1; z-index:2; filter:drop-shadow(0 3px 10px rgba(0,0,0,.5));
+    animation:breathe 4.5s var(--ease) infinite; }
+  /* the aura ring — colour = mood, pulse = state */
+  .avatar .aura{ position:absolute; inset:-6px; border-radius:50%;
+    background:radial-gradient(circle, var(--glow) 0%, transparent 70%); opacity:.55;
+    animation:auraPulse 4.5s var(--ease) infinite; z-index:0; }
+  .avatar .ring{ position:absolute; inset:0; border-radius:50%; border:2px solid var(--glow);
+    opacity:.6; z-index:1; }
+  /* eyelid blink — a sweep that closes briefly */
+  .avatar .lid{ position:absolute; inset:0; border-radius:50%; background:var(--bg);
+    transform:scaleY(0); transform-origin:center; opacity:.0; z-index:3;
+    animation:blink 6s steps(1) infinite; }
+  @keyframes breathe{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+  @keyframes auraPulse{ 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:.7;transform:scale(1.12)} }
+  @keyframes blink{ 0%,96%,100%{opacity:0;transform:scaleY(0)} 98%{opacity:.85;transform:scaleY(1)} }
+  /* MOODS — colour shift + motion (from the Emotion Engine spec) */
+  .avatar.calm  { --glow:#8b7cf6; } /* soft blue-violet, default rest */
+  .avatar.care  { --glow:#f472b6; transform:translateY(2px); } /* rose-pink, gentle lean-in */
+  .avatar.care .face{ animation-duration:5.5s; }
+  .avatar.think { --glow:#2dd4bf; } /* cool teal, focus */
+  .avatar.think .ring{ animation:spin 1.1s linear infinite; border-top-color:transparent; opacity:.9; }
+  .avatar.speak { --glow:#fbbf24; } /* warm gold, speaking */
+  .avatar.speak .aura{ animation-duration:.9s; }
+  .avatar.speak .face{ animation:talk .35s var(--ease) infinite; }
+  @keyframes spin{ to{transform:rotate(360deg)} }
+  @keyframes talk{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.06) translateY(-1px)} }
+  .presence h2{ font-size:1.2rem; font-weight:700; margin-top:.55rem; }
+  .presence .tag{ font-size:.74rem; color:var(--dim); margin-top:.12rem; }
+  .presence .moodword{ font-size:.66rem; color:var(--glow,var(--dim)); margin-top:.1rem; letter-spacing:.06em; text-transform:uppercase; opacity:.8; }
+  .stagebar{ height:4px; background:var(--line); border-radius:99px; margin-top:.5rem; overflow:hidden; width:140px; }
+  .stagebar i{ display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; transition:width .6s var(--ease); }
+  /* brain selector — ONE segmented pill with a sliding indicator (not 3 buttons) */
+  .brainpill{ position:relative; display:flex; background:var(--panel); border:1px solid var(--line);
+    border-radius:99px; padding:4px; margin:0 auto .65rem; width:max-content; gap:0; user-select:none; }
+  .brainpill .glider{ position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/3);
+    background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:99px;
+    box-shadow:0 4px 14px rgba(124,58,237,.45); transition:transform .32s var(--ease); z-index:0; }
+  .brainpill button{ position:relative; z-index:1; background:none; border:none; color:var(--dim);
+    padding:.45rem .95rem; font-size:.8rem; font-weight:600; cursor:pointer; border-radius:99px;
+    display:flex; align-items:center; gap:.32rem; transition:color .25s; white-space:nowrap; }
+  .brainpill button.on{ color:#fff; }
+  .brainpill button .ico{ font-size:.95rem; }
+  .brainhint{ text-align:center; color:var(--dim); font-size:.68rem; margin:-.35rem 0 .55rem; height:.9rem;
+    transition:opacity .25s; letter-spacing:.02em; }
+  .msgs{ flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:.55rem; padding:.3rem 0 .6rem; scroll-behavior:smooth; }
+  .msgs::-webkit-scrollbar{ width:0; }
+  .msg{ max-width:84%; padding:.72rem 1rem; border-radius:18px; font-size:.95rem; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; animation:pop .3s var(--ease); }
+  @keyframes pop{ from{opacity:0;transform:translateY(6px) scale(.98)} to{opacity:1;transform:none} }
+  .msg.you{ align-self:flex-end; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-bottom-right-radius:5px; }
+  .msg.them{ align-self:flex-start; background:var(--panel2); border:1px solid var(--line); border-bottom-left-radius:5px; }
+  .msg .meta{ font-size:.65rem; color:var(--dim); margin-top:.35rem; letter-spacing:.02em; }
+  .typing{ align-self:flex-start; background:var(--panel2); border:1px solid var(--line); border-radius:18px; border-bottom-left-radius:5px; padding:.8rem 1rem; display:flex; gap:5px; }
+  .typing span{ width:7px; height:7px; border-radius:50%; background:var(--dim); animation:blink 1.4s infinite both; }
+  .typing span:nth-child(2){ animation-delay:.2s } .typing span:nth-child(3){ animation-delay:.4s }
+  @keyframes blink{ 0%,80%,100%{opacity:.25;transform:translateY(0)} 40%{opacity:1;transform:translateY(-4px)} }
+  .composer{ display:flex; gap:.5rem; padding-top:.5rem; padding-bottom:env(safe-area-inset-bottom); }
+  .composer .field{ margin:0; flex:1; }
+  .composer button{ width:52px; height:52px; flex:none; border:none; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-size:1.2rem; cursor:pointer; transition:.18s var(--ease); }
+  .composer button:hover{ transform:scale(1.08); } .composer button:active{ transform:scale(.92); }
+  .back{ background:none; border:none; color:var(--dim); cursor:pointer; font-size:.82rem; padding:.3rem 0; align-self:flex-start; }
+  .back:hover{ color:var(--txt); }
+  footer{ color:#55556a; font-size:.68rem; text-align:center; padding:.6rem 0 1rem; }
+  .shield{ color:var(--ok); }
+</style>
+<script src="/i18n.js" defer></script>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><span class="logo">MEOK&nbsp;<b>ONE</b></span><select id="langSel" aria-label="Language" onchange="setLang(this.value)" style="margin-left:auto;background:var(--panel);color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:.18rem .4rem;font-size:.7rem;cursor:pointer"><option value="en">EN</option><option value="es">ES</option><option value="fr">FR</option><option value="de">DE</option></select></div>
+
+  <!-- HATCH -->
+  <div class="scene" id="hatch">
+    <div class="hero">
+      <h1 data-i18n-html="hero_h1">Hatch your<br>care-director</h1>
+      <p data-i18n="hero_p">One character. The whole sovereign OS behind it.</p>
+    </div>
+    <div class="egg-wrap"><div class="egg" id="egg">🥚</div></div>
+    <div class="label" data-i18n="label_nature">① choose their nature</div>
+    <div class="arch-grid" id="archGrid"></div>
+    <div class="label" data-i18n="label_style">② choose a care style</div>
+    <div class="chips" id="styleChips"></div>
+    <div class="label" data-i18n="label_name">③ give them a name</div>
+    <input class="field" type="text" id="nameInput" data-i18n-ph="name_ph" placeholder="e.g. Bramble, Atlas, Vega…" autocomplete="off" maxlength="24">
+    <button class="cta" id="hatchBtn" disabled>Choose a nature & style to hatch</button>
+    <footer><span data-i18n="footer">Free · runs on your machine ·</span> <span class="shield" data-i18n="sovereign_safe">Sovereign-safe</span></footer>
+  </div>
+
+  <!-- CHAT -->
+  <div class="scene chat hidden" id="chat">
+    <button class="back" id="backBtn" data-i18n="back">← hatch another</button>
+    <div class="presence">
+      <div class="avatar calm" id="avatar">
+        <div class="aura"></div>
+        <div class="ring"></div>
+        <div class="face" id="cav">🌸</div>
+        <div class="lid"></div>
+      </div>
+      <h2 id="cname">…</h2>
+      <div class="tag" id="ctag"></div>
+      <div class="moodword" id="moodword">calm</div>
+      <div class="stagebar"><i id="stagebar"></i></div>
+    </div>
+    <div class="brainpill" id="brainToggle">
+      <span class="glider" id="glider"></span>
+      <button data-brain="left" class="on"><span class="ico">🧠</span><span data-i18n="brain_left">Left</span></button>
+      <button data-brain="right"><span class="ico">☁️</span><span data-i18n="brain_right">Right</span></button>
+      <button data-brain="both"><span class="ico">⚖️</span><span data-i18n="brain_council">Council</span></button>
+    </div>
+    <div class="brainhint" id="brainhint">🧠 Left Brain · runs on your device · private &amp; free</div>
+    <div class="msgs" id="msgs"></div>
+    <div class="composer">
+      <input class="field" type="text" id="msgInput" data-i18n-ph="msg_ph" placeholder="talk to your sovereign…" autocomplete="off">
+      <button id="sendBtn">↑</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+let sel={archetype:null,care_style:null}, current=null, brain="left", xp=0;
+const STAGES=[["egg",0,"🥚"],["cracking",10,"🐣"],["hatching",25,"✨"],["growing",50,"🌱"],["mature",100,"🌟"],["full",200,"👑"]];
+async function api(p,o){ const r=await fetch(p,o); return r.json(); }
+
+(async function init(){
+  const d=await api("/api/archetypes");
+  d.archetypes.forEach(a=>{
+    const el=document.createElement("div"); el.className="arch";
+    el.innerHTML=`<div class="em">${a.emoji}</div><div class="nm">${a.label.replace('The ','')}</div><div class="ds">${a.description.split('—')[0]}</div>`;
+    el.onclick=()=>{ sel.archetype=a.id; document.querySelectorAll(".arch").forEach(x=>x.classList.remove("sel")); el.classList.add("sel"); ready(); };
+    $("#archGrid").appendChild(el);
+  });
+  Object.keys(d.care_styles).forEach(s=>{
+    const c=document.createElement("div"); c.className="chip"; c.textContent=s;
+    c.onclick=()=>{ sel.care_style=s; document.querySelectorAll(".chip").forEach(x=>x.classList.remove("sel")); c.classList.add("sel"); ready(); };
+    $("#styleChips").appendChild(c);
+  });
+})();
+$("#nameInput").oninput=ready;
+function ready(){ const ok=sel.archetype&&sel.care_style; const b=$("#hatchBtn"); b.disabled=!ok; b.textContent=ok?"🥚 Hatch "+( $("#nameInput").value.trim()||"my sovereign"):"Choose a nature & style to hatch"; }
+
+$("#hatchBtn").onclick=async()=>{
+  const egg=$("#egg"); egg.classList.add("cracking"); egg.textContent="🐣"; $("#hatchBtn").disabled=true; $("#hatchBtn").textContent="✨ hatching…";
+  const res=await api("/api/hatch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({archetype:sel.archetype,care_style:sel.care_style,name:$("#nameInput").value.trim()})});
+  current=res; xp=0;
+  await new Promise(r=>setTimeout(r,650));
+  $("#cav").textContent=res.visual.emoji; $("#cname").textContent=res.name;
+  // the character's own colour becomes its CALM aura (emotion engine baseline)
+  charColor=res.visual.color_primary||"#8b7cf6";
+  $("#ctag").textContent=`${res.archetype} · ${res.care_style}`; setMood("calm"); updateStage();
+  $("#hatch").classList.add("hidden"); $("#chat").classList.remove("hidden"); $("#chat").classList.add("fade");
+  await stream("them",`${res.stage_emoji} ${res.name} has hatched. "${res.tagline}"`,"just now");
+  $("#msgInput").focus();
+};
+function updateStage(){ let cur=STAGES[0]; for(const s of STAGES){ if(xp>=s[1]) cur=s; } const next=STAGES[STAGES.indexOf(cur)+1]; const pct=next?Math.min(100,Math.round((xp-cur[1])/(next[1]-cur[1])*100)):100; $("#stagebar").style.width=pct+"%"; if(current) $("#ctag").textContent=`${current.archetype} · ${current.care_style} · ${cur[2]} ${cur[0]}`; }
+
+const BRAIN_HINT={ left:"🧠 Left Brain · runs on your device · private & free",
+  right:"☁️ Right Brain · cloud frontier model · more power",
+  both:"⚖️ Council · both brains debate · Sovereign picks the safest" };
+$("#brainToggle").onclick=e=>{ const b=e.target.closest("button"); if(!b)return;
+  brain=b.dataset.brain; const btns=[...document.querySelectorAll("#brainToggle button")]; const i=btns.indexOf(b);
+  btns.forEach(x=>x.classList.remove("on")); b.classList.add("on");
+  $("#glider").style.transform=`translateX(${i*100}%)`;
+  const h=$("#brainhint"); h.style.opacity=0; setTimeout(()=>{ h.textContent=BRAIN_HINT[brain]; h.style.opacity=1; },130); };
+
+// ---- emotion engine: drive the avatar's mood (colour + motion) ----
+let charColor="#8b7cf6";
+const MOODWORD={calm:"calm",care:"caring",think:"thinking",speak:"speaking"};
+function setMood(m){ const a=$("#avatar"); a.className="avatar "+m;
+  if(m==="calm") a.style.setProperty("--glow",charColor); else a.style.removeProperty("--glow");
+  const w=$("#moodword"); if(w){ w.textContent=MOODWORD[m]||m; } }
+const DOWN=/\b(sad|tired|exhausted|down|hopeless|anxious|stressed|lonely|hurt|cry|awful|rough|overwhelm|depress|scared|worried|struggl)/i;
+function bubble(who){ const m=document.createElement("div"); m.className="msg "+who; $("#msgs").appendChild(m); $("#msgs").scrollTop=$("#msgs").scrollHeight; return m; }
+async function stream(who,text,meta){ const m=bubble(who); const words=text.split(" "); for(let i=0;i<words.length;i++){ m.textContent=words.slice(0,i+1).join(" "); $("#msgs").scrollTop=$("#msgs").scrollHeight; await new Promise(r=>setTimeout(r,28)); } if(meta){ const e=document.createElement("div"); e.className="meta"; e.textContent=meta; m.appendChild(e);} return m; }
+
+async function send(){
+  const t=$("#msgInput").value.trim(); if(!t||!current)return; $("#msgInput").value="";
+  const u=bubble("you"); u.textContent=t; $("#msgs").scrollTop=$("#msgs").scrollHeight;
+  const down=DOWN.test(t);             // emotion engine: does the user sound down?
+  setMood("think");                    // Sovereign thinking (teal, ring spins)
+  const typing=document.createElement("div"); typing.className="typing"; typing.innerHTML="<span></span><span></span><span></span>"; $("#msgs").appendChild(typing); $("#msgs").scrollTop=$("#msgs").scrollHeight;
+  let res; try{ res=await api("/api/think",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({character:current.character_id,message:t,brain,tier:"pro"})}); }catch(e){ res={reply:"[connection lost]",backend:"none"}; }
+  typing.remove();
+  setMood(down?"care":"speak");        // speaking (gold) — or caring lean-in (rose) if down
+  const meta=`${res.brain||brain} brain · ${res.engine||res.backend||"?"}${res.safe===false?" · ⚠ held for safety":""}`;
+  await stream("them",res.reply||"[no reply]",meta);
+  xp+=5; updateStage();
+  setMood(down?"care":"calm");         // settle; stay caring if you were down
+}
+$("#sendBtn").onclick=send;
+$("#msgInput").addEventListener("keydown",e=>{ if(e.key==="Enter")send(); });
+$("#backBtn").onclick=()=>{ $("#chat").classList.add("hidden"); $("#hatch").classList.remove("hidden"); const egg=$("#egg"); egg.textContent="🥚"; egg.classList.remove("cracking"); $("#msgs").innerHTML=""; sel={archetype:null,care_style:null}; xp=0; document.querySelectorAll(".sel").forEach(x=>x.classList.remove("sel")); $("#nameInput").value=""; ready(); };
+</script>
+</body>
+</html>
