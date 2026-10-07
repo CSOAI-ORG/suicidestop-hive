@@ -9,3 +9,8 @@ meok_one/data/law_agents.jsonl
 
 # openclawworld reference clones (local only — get-the-code)
 reference/
+
+# Credentials: never commit (7 Oct 2026: .meok_vm_key.txt was committed and is public via suicidestop-hive)
+.meok_vm_key.txt
+*.meok_vm_key*
+.env.local
